@@ -1,0 +1,57 @@
+# VCS / IDE
+.git
+.gitignore
+.vscode/
+.idea/
+*.code-workspace
+
+# Python cache / builds
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+wheelhouse/
+.cache/
+.tox/
+.nox/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Notebooks / outputs
+.ipynb_checkpoints/
+*.ipynb
+*.nbconvert.ipynb
+*.out
+
+# Datos / modelos / artefactos grandes
+data/
+models/
+*.h5
+*.ckpt
+*.ckpt.index
+*.tar
+image_*.tar
+
+# Permitir un dataset de ejemplo pequeño (opcional)
+!data/sample/
+!data/sample/**
+
+# Logs / secrets
+*.log
+logs/
+.env*
+secrets/
+*.pem
+*.key
+*.crt
+
+# TF/GPU caches
+.tfhub-cache/
+tensorflow_metadata/
+.nv/
+cuda_logs/

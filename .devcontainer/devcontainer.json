@@ -1,25 +1,29 @@
 {
   "name": "TF GPU Dev Container",
-  "build": {
-    "dockerfile": "../Dockerfile"
-  },
+  "image": "tensorflow/tensorflow:2.16.1-gpu",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-toolsai.jupyter",
         "ms-toolsai.tensorboard",
-        "ms-vscode-remote.remote-containers",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "ms-vscode-remote.remote-containers"
       ],
       "settings": {
-        "python.pythonPath": "/usr/local/bin/python"
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
       }
     }
   },
+  "workspaceFolder": "/app",
   "mounts": [
     "source=${localWorkspaceFolder},target=/app,type=bind"
   ],
-  "workspaceFolder": "/app",
-  "runArgs": ["--gpus", "all"]
+  "runArgs": ["--gpus", "all"],
+  "containerEnv": {
+    "MODEL_DIR": "/app/models",
+    "DATA_DIR": "/app/data",
+    "PYTHONUNBUFFERED": "1"
+  },
+  "postCreateCommand": "python -m pip install -U pip && pip install -r requirements/dev.txt"
 }

@@ -1,4 +1,4 @@
-# Use a pinned TF GPU image to avoid surprises from "latest"
+# Imagen base con TF GPU (no instales tensorflow por pip)
 FROM tensorflow/tensorflow:2.16.1-gpu
 
 # Avoid interactive prompts during package installs
@@ -10,21 +10,22 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Copy dependency list and install (upgrade pip first)
-COPY requirements/no-tf.txt ./requirements.txt
+COPY requirements/prod-no-tf.txt ./requirements.txt
 RUN python -m pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Copy application code, models and data into the image
-COPY src/ ./src/
-COPY models/ ./models/
-COPY data/ ./data/
 
-# Application-specific env vars (used by your app)
+# Copia el código (no datasets grandes)
+COPY src/ ./src/
+
+# Opcional: muestra de datos pequeña, útil para tests/demos
+#COPY data/sample/ ./data/sample/
+
 ENV MODEL_DIR=/app/models
 ENV DATA_DIR=/app/data
 
-# Port exposed for e.g. notebooks or web UI
-EXPOSE 8888
+# Puerto para el servidor de inferencia
+EXPOSE 8000
 
-# Run training script with unbuffered output for logs
-CMD ["python", "-u", "src/train_model.py"]
+# API de inferencia (FastAPI + Uvicorn)
+CMD ["python", "-m", "uvicorn", "src.inference:app", "--host", "0.0.0.0", "--port", "8000"]
