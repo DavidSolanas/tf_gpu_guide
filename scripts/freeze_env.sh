@@ -21,7 +21,10 @@ DEV_DEFAULT='pytest(-.*)?|pytest|pytest-cov|coverage|tox|nox|black|flake8|mypy|i
 # 3) Herramientas de packaging/publicación (no necesarias en runtime)
 PKG_TOOLS='pip|setuptools|wheel|build|twine|pkginfo|readme-renderer|keyring|requests-toolbelt|rfc3986|colorama'
 
-# 4) Leer dinámicamente requirements/dev.txt (si existe) y excluir esos paquetes también
+# 4) Librerías GTK/Cairo que deben venir del sistema (evitar compilar pycairo en runtime)
+GTK_CAIRO_STACK='PyGObject|pycairo|cairocffi'
+
+# 5) Leer dinámicamente requirements/dev.txt (si existe) y excluir esos paquetes también
 DEV_TXT_REGEX=''
 if [[ -f "${REQ_DIR}/dev.txt" ]]; then
   # Extraer nombres de paquete (sin versiones ni extras)
@@ -38,15 +41,16 @@ EXCLUDE_REGEX="^(${TF_STACK}"
 if [[ -n "${DEV_TXT_REGEX}" ]]; then
   EXCLUDE_REGEX+="|${DEV_TXT_REGEX}"
 fi
-EXCLUDE_REGEX+="|${DEV_DEFAULT}|${PKG_TOOLS})"
+EXCLUDE_REGEX+="|${DEV_DEFAULT}|${PKG_TOOLS}|${GTK_CAIRO_STACK})"
 
 echo "Excluyendo patrones en no-tf.txt:"
-echo " - TF_STACK:      ${TF_STACK}"
-echo " - DEV_DEFAULT:   ${DEV_DEFAULT}"
+echo " - TF_STACK:        ${TF_STACK}"
+echo " - DEV_DEFAULT:     ${DEV_DEFAULT}"
 if [[ -n "${DEV_TXT_REGEX}" ]]; then
-  echo " - DEV_TXT (dev): ${DEV_TXT_REGEX}"
+  echo " - DEV_TXT (dev):   ${DEV_TXT_REGEX}"
 fi
-echo " - PKG_TOOLS:     ${PKG_TOOLS}"
+echo " - PKG_TOOLS:       ${PKG_TOOLS}"
+echo " - GTK_CAIRO_STACK: ${GTK_CAIRO_STACK}"
 
 # Generar prod-no-tf.txt filtrando tf-lock.txt
 grep -vE "${EXCLUDE_REGEX}" "${REQ_DIR}/tf-lock.txt" > "${REQ_DIR}/prod-no-tf.txt"

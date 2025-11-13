@@ -58,7 +58,6 @@ pure_eval==0.2.3
 pydantic==2.12.4
 pydantic_core==2.41.5
 Pygments==2.17.2
-PyGObject==3.42.1
 PyJWT==2.3.0
 pyparsing==3.2.5
 python-apt==2.4.0+ubuntu3
