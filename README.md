@@ -36,6 +36,6 @@ Guía profesional para configurar entornos de desarrollo y producción con Tenso
 
 ## Notas rápidas
 - Para desarrollo con GPU local use Docker Desktop o WSL2 + Docker; el devcontainer monta el código local y pasa GPUs con runArgs.
-- La imagen incluye TensorFlow; instale solo paquetes auxiliares desde requirements/no-tf.txt.
+- La imagen incluye TensorFlow; instale solo paquetes auxiliares desde requirements/prod-no-tf.txt.
 - CI actual: construye la imagen y sube image_<tag>.tar como artifact para inspección y aprendizaje.
 - Para publicar en registries, use scripts/build_and_push.sh (requiere CLI y secrets del proveedor).
