@@ -1,5 +1,5 @@
 # Use a pinned TF GPU image to avoid surprises from "latest"
-FROM tensorflow/tensorflow:2.14.1-gpu
+FROM tensorflow/tensorflow:2.16.1-gpu
 
 # Avoid interactive prompts during package installs
 ENV DEBIAN_FRONTEND=noninteractive
@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Copy dependency list and install (upgrade pip first)
-COPY requirements.txt .
+COPY requirements/no-tf.txt ./requirements.txt
 RUN python -m pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 

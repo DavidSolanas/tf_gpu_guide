@@ -1,0 +1,9 @@
+# Do not install TensorFlow here — the base image tensorflow/tensorflow:2.16.1-gpu already provides it
+numpy
+pandas
+scikit-learn
+matplotlib
+
+# Development tools
+# Jupyter support
+ipykernel

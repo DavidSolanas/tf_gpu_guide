@@ -64,5 +64,5 @@ jobs:
 #        run: |
 #          # Ensure the multi-cloud push helper is executable and run it.
 #          # The script handles provider-specific tagging & push (aws|azure|gcp).
-#          chmod +x ./build_and_push.sh
-#          ./build_and_push.sh "$PROVIDER"
+#          chmod +x ./scripts/build_and_push.sh
+#          ./scripts/build_and_push.sh "$PROVIDER"

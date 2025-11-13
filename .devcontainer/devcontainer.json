@@ -1,6 +1,8 @@
 {
   "name": "TF GPU Dev Container",
-  "image": "tensorflow/tensorflow:latest-gpu",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -16,8 +18,8 @@
     }
   },
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    "source=${localWorkspaceFolder},target=/app,type=bind"
   ],
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/app",
   "runArgs": ["--gpus", "all"]
 }
