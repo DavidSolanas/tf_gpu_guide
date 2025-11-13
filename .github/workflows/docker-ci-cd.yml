@@ -1,0 +1,68 @@
+# CI workflow: build, smoke-test and optionally push a TensorFlow GPU Docker image.
+# Triggers: pushes to main branch and tags starting with `v`.
+name: Build & Test Docker TensorFlow GPU
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU (optional multi-arch build support)
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image (local)
+        id: build
+        run: |
+          IMAGE_NAME=tf-gpu-img
+          IMAGE_TAG=${GITHUB_SHA::7}
+          echo "Building ${IMAGE_NAME}:${IMAGE_TAG}"
+          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f Dockerfile .
+
+      - name: Run smoke test (verify TF in image)
+        # Note: GitHub runners do not expose GPUs. This step verifies TF is present inside the image.
+        run: |
+          IMAGE_NAME=tf-gpu-img
+          IMAGE_TAG=${GITHUB_SHA::7}
+          docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} \
+            python -c "import tensorflow as tf; print('TF', tf.__version__); print('GPUs', tf.config.list_physical_devices('GPU'))"
+
+      - name: Save image as tar and upload artifact (for inspection)
+        run: |
+          IMAGE_NAME=tf-gpu-img
+          IMAGE_TAG=${GITHUB_SHA::7}
+          docker save ${IMAGE_NAME}:${IMAGE_TAG} -o image_${IMAGE_TAG}.tar
+        # upload the saved tar so you can download and inspect locally
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image-tar
+          path: image_*.tar
+
+# Optional push steps removed — keep your build_and_push.sh for future use if you decide to push images.
+# - name: Optional push to registry via repo script
+#        # Use env.PUSH_PROVIDER in the condition — secrets.* is not allowed here
+#        if: github.ref == 'refs/heads/main' && env.PUSH_PROVIDER != ''
+#        # Pass job-level env values into this step so the script can use them
+#        env:
+#          PROVIDER: ${{ env.PUSH_PROVIDER }}     # forwarded to the script as $PROVIDER
+#          AWS_REGION: ${{ env.AWS_REGION }}
+#          ACR_NAME: ${{ env.ACR_NAME }}
+#          PROJECT_ID: ${{ env.GCP_PROJECT_ID }}
+#        run: |
+#          # Ensure the multi-cloud push helper is executable and run it.
+#          # The script handles provider-specific tagging & push (aws|azure|gcp).
+#          chmod +x ./build_and_push.sh
+#          ./build_and_push.sh "$PROVIDER"

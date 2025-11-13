@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Profesional: TensorFlow GPU, Docker y VS Code</title>
+    <style>
+        /* --- Reseteo Global y Cuerpo --- */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.6;
+            background-color: #f6f8fa; /* Color de fondo similar a GitHub */
+            color: #24292e; /* Color de texto principal */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Contenedor Principal --- */
+        .container {
+            width: 90%;
+            max-width: 960px; /* Ancho máximo para legibilidad */
+            margin: 30px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border: 1px solid #d1d5da;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- Encabezados y Separadores --- */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+            line-height: 1.25;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+
+        h3 {
+            font-size: 1.4em;
+        }
+
+        h4 {
+            font-size: 1.15em;
+            color: #444;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #e1e4e8;
+            margin: 2.5em 0;
+        }
+
+        /* --- Estilos de Tablas --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            font-size: 0.95em;
+            display: block;
+            overflow-x: auto; /* Para tablas anchas en móvil */
+        }
+
+        th, td {
+            border: 1px solid #dfe2e5; /* Bordes de celda sutiles */
+            padding: 10px 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        thead th {
+            background-color: #f6f8fa; /* Fondo del encabezado de tabla */
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fcfcfc; /* Rayas de cebra sutiles */
+        }
+
+        /* --- Estilos de Listas --- */
+        ul {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+        
+        li ul {
+            margin-top: 0.5em;
+        }
+
+        /* --- Bloques de Código (pre) y Código en Línea (code) --- */
+        pre {
+            background-color: #282c34; /* Mantenemos tu fondo oscuro */
+            color: #abb2bf;
+            padding: 1.2em;
+            border-radius: 6px;
+            overflow-x: auto; /* Esencial para líneas de código largas */
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9em;
+            line-height: 1.45;
+        }
+
+        /* Código dentro de <pre> (para resetear estilos) */
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        /* Código en línea (fuera de <pre>) */
+        :not(pre) > code {
+            background-color: #f3f3f3;
+            color: #333;
+            padding: 0.2em 0.4em;
+            margin: 0 0.1em;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <h1>Guía profesional: Setup IA con TensorFlow GPU, Docker y VS Code</h1>
+
+        <h2>1. Comparativa de entornos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Entorno</th>
+                    <th>Ventajas</th>
+                    <th>Desventajas</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Windows nativo con CUDA</td>
+                    <td>
+                        <ul>
+                            <li>Acceso directo a GPU</li>
+                            <li>Configuración "clásica"</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Conflictos de drivers posibles</li>
+                            <li>Menos reproducible</li>
+                        </ul>
+                    </td>
+                    <td>Útil para pruebas rápidas</td>
+                </tr>
+                <tr>
+                    <td>WSL2 + Ubuntu</td>
+                    <td>
+                        <ul>
+                            <li>Linux nativo</li>
+                            <li>Mejor compatibilidad con pipelines y contenedores</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Requiere configuración de drivers</li>
+                        </ul>
+                    </td>
+                    <td>Base sólida para contenedor</td>
+                </tr>
+                <tr>
+                    <td>Docker en Windows</td>
+                    <td>
+                        <ul>
+                            <li>Entorno aislado y reproducible</li>
+                            <li>GPU con <code>--gpus</code></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Necesita Docker Desktop</li>
+                            <li>Código debe montarse o copiarse</li>
+                        </ul>
+                    </td>
+                    <td>Bueno para reproducibilidad</td>
+                </tr>
+                <tr>
+                    <td>Docker en WSL2</td>
+                    <td>
+                        <ul>
+                            <li>Mejor rendimiento GPU</li>
+                            <li>Entorno Linux nativo</li>
+                            <li>Compatible con Remote Containers</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Configuración inicial más compleja</li>
+                        </ul>
+                    </td>
+                    <td>Recomendado para flujo profesional: desarrollo + producción</td>
+                </tr>
+            </tbody>
+        </table>
+
+        
+        <h2>2 Flujo de desarrollo profesional</h2>
+        <h3>2.1 Estructura de proyecto recomendada</h3>
+        
+        <pre><code>har_tf_project/
+|
+├── Dockerfile
+├── requirements.txt
+├── src/
+|   |
+|   ├── train_model.py
+|   └── inference.py
+|
+├── models/
+├── data/
+├── notebooks/
+└── .devcontainer/
+    └── devcontainer.json
+</code></pre>
+        
+        <h3>2.2 VS Code + Remote Containers</h3>
+        
+        <h4>Extensiones recomendadas:</h4>
+        <pre><code>ms-vscode-remote.remote-containers
+ms-vscode-remote.remote-wsl
+ms-python.python
+ms-toolsai.jupyter
+ms-toolsai.tensorboard
+ms-azuretools.vscode-docker
+</code></pre>
+
+        <ul>
+            <li><code>.devcontainer/devcontainer.json</code> monta carpeta local como volumen:</li>
+        </ul>
+        
+        <pre><span style="color: #e06c75;">"mounts"</span>: [
+    <span style="color: #98c379;">"source=${localWorkspaceFolder},target=/workspace,type=bind"</span>
+]
+</pre>
+
+        <h4>GPU habilitado:</h4>
+        <pre><span style="color: #e06c75;">"runArgs"</span>: [<span style="color: #98c379;">"--gpus"</span>, <span style="color: #98c379;">"all"</span>]
+</pre>
+        
+        <ul>
+            <li>Código permanece local, contenedor ejecuta</li>
+        </ul>
+
+        <h4>Ejemplo buena práctica:</h4>
+        <ul>
+            <li>Guardar notebooks en <code>notebooks/</code> y scripts de entrenamiento en <code>src/</code></li>
+            <li>Nunca ejecutar código directamente en el host; siempre usar contenedor para reproducibilidad</li>
+        </ul>
+
+        <hr>
+
+        <h3>2.3 Imagen Docker de producción</h3>
+        
+        <h4>Copiar código y dependencias:</h4>
+        <pre><span style="color: #c678dd;">COPY</span> requirements.txt .
+<span style="color: #c678dd;">RUN</span> pip install -r requirements.txt
+<span style="color: #c678dd;">COPY</span> src/ /src/
+<span style="color: #c678dd;">COPY</span> models/ /models/
+<span style="color: #c678dd;">COPY</span> data/ /data/
+</pre>
+
+        <h4>Variables de entorno:</h4>
+        <pre><span style="color: #c678dd;">ENV</span> MODEL_DIR=/app/models
+<span style="color: #c678dd;">ENV</span> DATA_DIR=/app/data
+</pre>
+
+        <h4>Ejemplos de buenas prácticas:</h4>
+        <ul>
+            <li>Usar <code>.dockerignore</code>:</li>
+        </ul>
+        <pre><code>.git
+.notebooks
+__pycache__
+*.pyc
+*.log
+</code></pre>
+
+        <ul>
+            <li>Etiquetar imágenes por versión:</li>
+        </ul>
+        <pre><code>docker build -t har-tf-gpu:v1.0 .
+</code></pre>
+
+        <ul>
+            <li>Evitar montar volúmenes en producción para no depender de la máquina local</li>
+        </ul>
+
+        
+        <h2>3 Pipeline CI/CD profesional</h2>
+        <ul>
+            <li>Script <code>build_and_push.sh</code>:
+                <ul>
+                    <li>Construye imagen Docker</li>
+                    <li>Etiqueta con proveedor y versión</li>
+                    <li>Push a AWS ECR / Azure ACR / GCP Artifact Registry</li>
+                </ul>
+            </li>
+            <li>GitHub Actions Workflow:
+                <ul>
+                    <li>Dispara build/push en <code>main</code> o <code>release/*</code></li>
+                    <li>Test unitarios o smoke test dentro del contenedor</li>
+                    <li>Autenticación con secrets</li>
+                    <li>Opcional: generar tags semánticos automáticos</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Ejemplo de buenas prácticas:</h4>
+        <ul>
+            <li>Secrets de credenciales: guardados en GitHub Actions</li>
+            <li>Tags semánticos: <code>v1.0.0</code>, <code>v1.1.0</code></li>
+            <li>Ejecutar <code>pytest</code> o test ligero antes del push:</li>
+        </ul>
+        
+        <pre><span style="color: #e06c75;">- name:</span> Run smoke test
+  <span style="color: #e06c75;">run:</span> docker run --rm $IMAGE_NAME:$IMAGE_TAG python -c "import tensorflow as tf; print(tf.__version__)"
+</pre>
+
+        <hr>
+
+        <h2>4 Flujo de desarrollo → producción</h2>
+        <pre><code>flowchart LR
+    A[VS Code local] --> B[Dev Container en WSL2]
+    B --> C[Pruebas unitarias / notebooks]
+    C --> D[Commit & Push a GitHub]
+    D --> E[GitHub Actions CI/CD]
+    E --> F[Build Docker Producción]
+    F --> G[Push a Cloud registry (AWS/ECR, Azure/ACR, GCP/Artifact)]
+    G --> H[Despliegue en GPU cloud]
+</code></pre>
+
+        <hr>
+
+        <h2>5 Buenas prácticas resumidas con ejemplos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Práctica</th>
+                    <th>Ejemplo concreto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Versionado de imágenes</td>
+                    <td><code>docker build -t har-tf-gpu:v1.0 .</code></td>
+                </tr>
+                <tr>
+                    <td>Ignorar archivos innecesarios</td>
+                    <td><code>.dockerignore</code> con <code>.git</code>, <code>notebooks/</code>, <code>__pycache__</code></td>
+                </tr>
+                <tr>
+                    <td>Separar desarrollo y producción</td>
+                    <td>Dev Container monta carpeta local, producción copia todo</td>
+                </tr>
+                <tr>
+                    <td>Variables de entorno</td>
+                    <td><code>ENV MODEL_DIR=/app/models</code> y usar en scripts</td>
+                </tr>
+                <tr>
+                    <td>CI/CD seguro</td>
+                    <td>GitHub Actions con secrets (<code>AWS_ACCESS_KEY_ID</code>, <code>GCP_SA_KEY</code>)</td>
+                </tr>
+                <tr>
+                    <td>Tests antes del push</td>
+                    <td><code>docker run --rm $IMAGE_NAME:$IMAGE_TAG ... pytest tests/</code></td>
+                </tr>
+                <tr>
+                    <td>Reproducibilidad</td>
+                    <td>Contenedor autocontenible con código y dependencias incluidas</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+</body>
+</html>
