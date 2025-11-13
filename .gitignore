@@ -1,0 +1,111 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+*.pyd
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-wheel-metadata/
+wheelhouse/
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+# Keep outputs separate if you track notebooks; remove the previous line if you want to keep .ipynb files
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime files
+*.log
+logs/
+*.pid
+*.seed
+*.cache
+
+# Python build / bytecode
+*.pyc
+*.pyo
+*.pyd
+
+# Secrets and env files
+.env*
+secrets/
+*.pem
+*.key
+*.crt
+
+# Data, models and large artifacts (usually not committed)
+data/
+models/
+*.h5
+*.ckpt
+*.ckpt.index
+*.tar
+image_*.tar
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# TensorFlow / GPU related caches
+checkpoint
+.tfhub-cache/
+tensorflow_metadata/
+.nv/
+cuda_logs/
+
+# Notebook / tooling outputs
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+*.out
+
+# Misc
+coverage.xml
+reports/
+
+# Keep requirements and scripts tracked (adjust as needed)
+# requirements/
+# scripts/
