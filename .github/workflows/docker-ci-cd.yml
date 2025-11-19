@@ -1,10 +1,10 @@
 # CI workflow: build, smoke-test and optionally push a TensorFlow GPU Docker image.
-# Triggers: pushes to main branch and tags starting with `v`.
+# Triggers: pushes to master branch and tags starting with `v`.
 name: Build & Test Docker TensorFlow GPU
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     tags: [ 'v*' ]
 
 jobs:
