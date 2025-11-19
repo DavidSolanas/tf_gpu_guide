@@ -31,8 +31,8 @@ jobs:
         mkdir -p models
         # Install TensorFlow to train model
         pip install tensorflow==2.16.1
-        # Train a simple model
-        python src/train_model.py --epochs 1
+        # Train a simple model (use local models dir, not /app/models)
+        python src/train_model.py --epochs 1 --model-dir ./models
         # Verify model was created
         ls -lh models/
     
