@@ -34,6 +34,16 @@ jobs:
           # Verify model was created
           ls -lh models/
 
+      - name: Free up disk space
+        run: |
+          # Remove unnecessary files to free up space
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          docker system prune -af
+          df -h
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
