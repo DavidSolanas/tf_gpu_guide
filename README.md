@@ -39,3 +39,29 @@ Guía profesional para configurar entornos de desarrollo y producción con Tenso
 - La imagen incluye TensorFlow; instale solo paquetes auxiliares desde requirements/prod-no-tf.txt.
 - CI actual: construye la imagen y sube image_<tag>.tar como artifact para inspección y aprendizaje.
 - Para publicar en registries, use scripts/build_and_push.sh (requiere CLI y secrets del proveedor).
+
+## Uso
+
+### Configuración
+El proyecto utiliza `pydantic-settings` para la configuración. Las variables de entorno pueden definirse en un archivo `.env` o en el entorno del sistema.
+Variables principales:
+- `MODEL_DIR`: Directorio donde se almacenan los modelos (default: `/app/models`)
+- `DEFAULT_MODEL_PATH`: Ruta al modelo por defecto (default: `$MODEL_DIR/model.keras`)
+
+### Ejecutar Tests
+Para ejecutar los tests unitarios:
+```bash
+pytest tests/
+```
+
+### Entrenar Modelo
+Para entrenar un modelo de ejemplo:
+```bash
+python src/train_model.py --epochs 5
+```
+
+### Iniciar API
+Para iniciar el servidor de inferencia:
+```bash
+uvicorn src.inference:app --host 0.0.0.0 --port 8000
+```

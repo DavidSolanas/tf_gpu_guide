@@ -7,3 +7,4 @@ matplotlib
 # Serving API
 fastapi
 uvicorn[standard]
+pydantic-settings

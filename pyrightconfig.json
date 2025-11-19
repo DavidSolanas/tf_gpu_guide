@@ -1,0 +1,22 @@
+{
+    "venvPath": ".",
+    "venv": ".venv",
+    // Nivel de base: "basic" es como Pylance por defecto. "standard" es un poco más estricto.
+    "typeCheckingMode": "standard",
+    // --- SILENCIAR EL RUIDO (LO IMPORTANTE) ---
+    // Ignora cuando llamas a una función y no guardas el resultado (ej: parser.add_argument)
+    "reportUnusedCallResult": "none",
+    // Ignora cuando una librería (como TF) no tiene tipos definidos perfectamente
+    "reportUnknownMemberType": "none",
+    "reportUnknownVariableType": "none",
+    "reportUnknownArgumentType": "none",
+    "reportMissingTypeStubs": "none",
+    "reportAny": "none",
+    // --- LIMPIEZA VISUAL ---
+    // Los imports no usados que se vean grises, no como un error amarillo/rojo
+    "reportUnusedImport": "information",
+    "reportUnusedVariable": "information",
+    // Otras reglas molestas en scripts de ML
+    "reportPrivateImportUsage": "none",
+    "reportImplicitStringConcatenation": "none"
+}
