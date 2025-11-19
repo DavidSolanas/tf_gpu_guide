@@ -30,7 +30,7 @@ htmlcov/
 
 # Datos / modelos / artefactos grandes
 data/
-models/
+# models/  # Commented to allow model.keras to be included in the image
 *.h5
 *.ckpt
 *.ckpt.index

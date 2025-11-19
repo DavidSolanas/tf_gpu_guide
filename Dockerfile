@@ -23,6 +23,9 @@ RUN python -m pip install --upgrade pip \
 # Copia el código (no datasets grandes)
 COPY src/ ./src/
 
+# Copy the trained model
+COPY models/ ./models/
+
 # Change ownership of the application directory to the non-root user
 RUN chown -R appuser:appuser /app
 

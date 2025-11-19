@@ -49,10 +49,53 @@ Variables principales:
 - `DEFAULT_MODEL_PATH`: Ruta al modelo por defecto (default: `$MODEL_DIR/model.keras`)
 
 ### Ejecutar Tests
+
+[![API Tests](https://github.com/YOUR_USERNAME/tf_gpu_guide/actions/workflows/test-api.yml/badge.svg)](https://github.com/YOUR_USERNAME/tf_gpu_guide/actions/workflows/test-api.yml)
+
+#### Tests Unitarios
 Para ejecutar los tests unitarios:
 ```bash
-pytest tests/
+pytest tests/test_inference.py -v
 ```
+
+#### Tests de Integración de API
+Los tests de integración requieren que el contenedor de la API esté ejecutándose.
+
+**Opción 1: Usando Docker (Recomendado)**
+```bash
+# 1. Construir la imagen
+docker build -t tf-gpu-api:latest -f Dockerfile .
+
+# 2. Iniciar el contenedor
+docker run -d --name tf-gpu-api-test -p 8000:8000 tf-gpu-api:latest
+
+# 3. Esperar a que la API esté lista
+sleep 5
+
+# 4. Ejecutar tests de integración
+pytest tests/test_api_integration.py -v
+
+# 5. Limpiar
+docker stop tf-gpu-api-test && docker rm tf-gpu-api-test
+```
+
+**Opción 2: Usando el script local**
+```bash
+# Iniciar la API localmente
+uvicorn src.inference:app --host 0.0.0.0 --port 8000
+
+# En otra terminal, ejecutar los tests
+pytest tests/test_api_integration.py -v
+```
+
+#### CI/CD Automático
+Los tests de integración se ejecutan automáticamente en GitHub Actions en cada push o pull request. El workflow:
+1. Construye la imagen Docker
+2. Inicia el contenedor
+3. Ejecuta todos los tests de integración
+4. Limpia los recursos
+
+Ver el estado en: [Actions](https://github.com/YOUR_USERNAME/tf_gpu_guide/actions)
 
 ### Entrenar Modelo
 Para entrenar un modelo de ejemplo:
