@@ -25,6 +25,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest requests
     
+    - name: Train dummy model for CI
+      run: |
+        # Create models directory
+        mkdir -p models
+        # Install TensorFlow to train model
+        pip install tensorflow==2.16.1
+        # Train a simple model
+        python src/train_model.py --epochs 1
+        # Verify model was created
+        ls -lh models/
+    
     - name: Build Docker image
       run: |
         docker build -t tf-gpu-api:test -f Dockerfile .

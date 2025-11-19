@@ -18,6 +18,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Train dummy model for CI
+        run: |
+          # Create models directory
+          mkdir -p models
+          # Install minimal dependencies to train model
+          pip install tensorflow==2.16.1
+          # Train a simple model
+          python src/train_model.py --epochs 1
+          # Verify model was created
+          ls -lh models/
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
